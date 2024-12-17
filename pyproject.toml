@@ -1,0 +1,7 @@
+[project.optional-dependencies]
+docs = [
+    "sphinx>=4.0",
+    "sphinx-rtd-theme",
+    "sphinxcontrib-napoleon",
+    "sphinxcontrib-autodoc",
+]
