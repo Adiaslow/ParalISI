@@ -1,27 +1,26 @@
-# PyISI: Python Intrinsic Signal Imaging Analysis
+# PyISI: Modern Python Implementation of Intrinsic Signal Imaging Analysis
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-PyISI is a modern Python library for analyzing intrinsic signal imaging (ISI) data from visual cortex experiments. This project is a complete modernization of a legacy MATLAB codebase, rebuilt with contemporary software engineering practices and performance optimizations.
+PyISI is a modern Python library implementing the intrinsic signal imaging (ISI) analysis protocol described in [Juavinett et al. (2016)](https://doi.org/10.1038/nprot.2016.158). This project modernizes the original MATLAB codebase with contemporary software engineering practices, improved performance, and enhanced usability.
 
 ## Features
 
-- **Complete ISI Analysis Pipeline**
-  - Robust data loading and preprocessing
-  - Advanced signal processing and filtering
-  - Retinotopic mapping and visualization
-  - Visual area segmentation and analysis
-  - Orientation and direction map processing
-  - Quality assessment and validation
+### Core ISI Analysis
+- Complete retinotopic mapping pipeline from raw imaging data
+- Automated visual area segmentation based on field sign reversals
+- Generation of altitude and azimuth maps
+- Blood vessel artifact removal
+- Customizable filtering and signal processing
+- Support for both episodic and continuous stimulation paradigms
 
-- **Modern Implementation**
-  - Type-annotated codebase (Python 3.10+)
-  - GPU acceleration via CUDA
-  - Vectorized operations with NumPy/CuPy
-  - Memory-efficient data handling
-  - Comprehensive test suite
-  - Clean, maintainable architecture following SOLID principles
+### Technical Improvements
+- **Performance**: GPU acceleration via CUDA for intensive computations
+- **Modularity**: Clean separation between data loading, processing, and visualization
+- **Validation**: Comprehensive test suite ensuring accurate reproduction of published methods
+- **Extensibility**: Modern Python architecture allowing easy addition of new analysis methods
+- **Automation**: Streamlined workflow requiring minimal manual intervention
 
 ## Installation
 
@@ -34,7 +33,6 @@ pip install pyisi[cuda]
 ```
 
 ### Requirements
-
 - Python 3.10+
 - NumPy
 - SciPy
@@ -42,47 +40,55 @@ pip install pyisi[cuda]
 - CuPy (optional, for GPU support)
 - CUDA Toolkit 11.0+ (optional, for GPU support)
 
-<!--
 ## Quick Start
 
 ```python
-from pyisi.core import Experiment
-from pyisi.processing import TrialProcessor
-from pyisi.analysis import OrientationAnalyzer
+import pyisi
 
-# Load experimental data
-experiment = Experiment.from_analyzer("path/to/analyzer/file")
+# Load and preprocess imaging data
+data = pyisi.load_data("path/to/data")
+preprocessed = pyisi.preprocess(data)
 
-# Process trials
-processor = TrialProcessor()
-processed_data = processor.process_condition_data(experiment)
+# Generate retinotopic maps
+alt_map, az_map = pyisi.compute_retinotopy(preprocessed)
 
-# Analyze orientation maps
-analyzer = OrientationAnalyzer()
-orientation_maps = analyzer.analyze_orientation_map(processed_data)
+# Segment visual areas
+areas = pyisi.segment_areas(alt_map, az_map)
+
+# Visualize results
+pyisi.plot_visual_areas(areas)
 ```
--->
+
+## Key Components
+
+### Data Processing
+- `pyisi.io`: Efficient data loading and management
+- `pyisi.processing`: Core signal processing algorithms
+- `pyisi.analysis`: Advanced analysis tools
+- `pyisi.visualization`: Publication-quality plotting
+
+### GPU Acceleration
+- Parallel processing of large imaging datasets
+- CUDA-optimized filtering operations
+- Memory-efficient handling of time series data
+
+### Quality Control
+- Automated artifact detection
+- Signal quality assessment
+- Validation against published results
+
 ## Documentation
 
-Comprehensive documentation is available at [docs.pyisi.org](https://docs.pyisi.org), including:
+Full documentation is available at [docs.pyisi.org](https://docs.pyisi.org), including:
 - Detailed API reference
-- Usage tutorials and examples
+- Step-by-step tutorials
+- Best practices for ISI analysis
 - Migration guide from MATLAB
 - Performance optimization tips
-- Best practices for ISI analysis
-
-## Key Improvements Over MATLAB Version
-
-- **Performance**: GPU acceleration and vectorized operations provide significant speedups
-- **Reliability**: Comprehensive testing and validation ensure reproducible results
-- **Maintainability**: Modern Python architecture with clear separation of concerns
-- **Extensibility**: Modular design allows easy addition of new analysis methods
-- **User Experience**: Improved error handling and informative feedback
-- **Memory Efficiency**: Optimized data structures and processing pipeline
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
+Contributions are welcome! Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
 - Setting up the development environment
 - Running tests
 - Code style guidelines
@@ -90,14 +96,25 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ## Citation
 
-If you use PyISI in your research, please cite:
+If you use PyISI in your research, please cite both the original protocol and this implementation:
 
 ```bibtex
+@article{juavinett2016automated,
+    title={Automated identification of mouse visual areas with intrinsic signal imaging},
+    author={Juavinett, Ashley L and Nauhaus, Ian and Garrett, Marina E and Zhuang, Jun and Callaway, Edward M},
+    journal={Nature protocols},
+    volume={12},
+    number={1},
+    pages={32--43},
+    year={2016}
+}
+
 @software{pyisi2024,
-  title = {PyISI: Python Intrinsic Signal Imaging Analysis},
-  year = {2024},
-  url = {https://github.com/Adiaslow/PyISI},
-  version = {0.1.0}
+    title={PyISI: Modern Python Implementation of Intrinsic Signal Imaging Analysis},
+    author={Adam Murray},
+    year={2024},
+    url={https://github.com/Adiaslow/PyISI},
+    version={0.1.0}
 }
 ```
 
@@ -107,4 +124,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-This project builds upon the original MATLAB ISI analysis codebase developed by [Original Authors]. We thank the contributors and maintainers of the original codebase for their foundational work in ISI analysis.
+This project is a modern Python implementation of the ISI analysis protocol developed by Juavinett et al. We thank the authors of the original protocol for their foundational work in automated visual area identification.
