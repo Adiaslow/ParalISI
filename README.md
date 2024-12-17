@@ -3,7 +3,7 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-PyISI is a modern Python library implementing the intrinsic signal imaging (ISI) analysis protocol described in [Juavinett et al. (2016)](https://doi.org/10.1038/nprot.2016.158). This project modernizes the original MATLAB codebase with contemporary software engineering practices, improved performance, and enhanced usability.
+PyISI is a modern Python library implementing the intrinsic signal imaging (ISI) analysis protocol described in [Juavinett et al. (2016)](https://doi.org/10.1038/nprot.2016.158). Developed in the [Kim Laboratory](https://mcd.ucsc.edu/faculty/kim-e.html) at UC Santa Cruz, this project modernizes the original MATLAB codebase with contemporary software engineering practices, improved performance, and enhanced usability.
 
 ## Features
 
@@ -86,6 +86,16 @@ Full documentation is available at [docs.pyisi.org](https://docs.pyisi.org), inc
 - Migration guide from MATLAB
 - Performance optimization tips
 
+## Research Team
+
+### Project Leadership
+- **Dr. Euiseok Kim** (PI) - UC Santa Cruz
+- **Adam Murray** (Lead Developer) - UC Santa Cruz
+- **Matthew Jacobs** (Scientific Advisor) - UC Santa Cruz
+- **Hylen James** (Hardware Development) - UC Santa Cruz
+
+For detailed information about project contributors, see [AUTHORS.md](AUTHORS.md) and [CONTRIBUTORS.md](CONTRIBUTORS.md).
+
 ## Contributing
 
 Contributions are welcome! Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
@@ -109,9 +119,9 @@ If you use PyISI in your research, please cite both the original protocol and th
     year={2016}
 }
 
-@software{pyisi2024,
-    title={PyISI: Modern Python Implementation of Intrinsic Signal Imaging Analysis},
-    author={Adam Murray},
+@software{murray2024pyisi,
+    title={PyISI: Python Implementation of Intrinsic Signal Imaging Analysis},
+    author={Murray, Adam M},
     year={2024},
     url={https://github.com/Adiaslow/PyISI},
     version={0.1.0}
@@ -124,4 +134,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-This project is a modern Python implementation of the ISI analysis protocol developed by Juavinett et al. We thank the authors of the original protocol for their foundational work in automated visual area identification.
+This project was developed in the Kim Laboratory at UC Santa Cruz, which investigates the organizational logic of long-distance cortical circuits and molecular mechanisms of their development. We thank the authors of the original protocol for their foundational work in automated visual area identification. For detailed acknowledgments, see [ACKNOWLEDGMENTS.md](ACKNOWLEDGMENTS.md).
