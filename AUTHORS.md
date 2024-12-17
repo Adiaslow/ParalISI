@@ -22,16 +22,19 @@ Juavinett, A. L., Nauhaus, I., Garrett, M. E., Zhuang, J., & Callaway, E. M. (20
 ### Core Development Team
 - **Adam Michael Murray**
   - Lead Developer
-  - Undergraduate Researcher, University of California, Santa Cruz
+  - Undergraduate Researcher, Biomolecular Engineering
+  - University of California, Santa Cruz
 
 ### Research Team
 - **Matthew Jacobs**
   - Scientific Advisor
-  - Graduate Student, MCD Biology, University of California, Santa Cruz
+  - Graduate Student, MCD Biology
+  - University of California, Santa Cruz
 
 - **Hylen Taylor James**
   - Hardware Development
-  - Undergraduate Researcher, University of California, Santa Cruz
+  - Undergraduate Researcher, Neuroscience
+  - University of California, Santa Cruz
 
 ## Acknowledgments
 We would like to thank:
