@@ -89,7 +89,7 @@ Full documentation is available at [docs.pyisi.org](https://docs.pyisi.org), inc
 ## Research Team
 
 ### Project Leadership
-- **Dr. Euiseok Kim** (PI) - UC Santa Cruz
+- **Dr. Euiseok Kim** (Principal Investigator) - UC Santa Cruz
 - **Adam Murray** (Lead Developer) - UC Santa Cruz
 - **Matthew Jacobs** (Scientific Advisor) - UC Santa Cruz
 - **Hylen James** (Hardware Development) - UC Santa Cruz
