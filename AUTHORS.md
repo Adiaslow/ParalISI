@@ -1,4 +1,4 @@
-# Authors and Contributors
+# Authors
 
 ## Original MATLAB Implementation
 The original MATLAB implementation was developed as part of the following publication:
@@ -19,40 +19,33 @@ Juavinett, A. L., Nauhaus, I., Garrett, M. E., Zhuang, J., & Callaway, E. M. (20
   - Assistant Professor of MCD Biology
   - University of California, Santa Cruz
 
-### Lead Developer
+### Core Development Team
 - **Adam Michael Murray**
+  - Lead Developer
   - Undergraduate Researcher, University of California, Santa Cruz
-  - Main architect of the Python port
-  - Implementation of GPU acceleration
-  - Testing framework development
-  - Project maintenance and documentation
 
-### Scientific Advisor
+### Research Team
 - **Matthew Jacobs**
-  - Graduate Student, MCD Biology
-  - University of California, Santa Cruz
+  - Scientific Advisor
+  - Graduate Student, MCD Biology, University of California, Santa Cruz
 
-### Hardware Development
 - **Hylen Taylor James**
-  - Undergraduate Researcher
-  - University of California, Santa Cruz
-  - Hardware implementation and testing
+  - Hardware Development
+  - Undergraduate Researcher, University of California, Santa Cruz
 
 ## Acknowledgments
 We would like to thank:
 - The original authors for their foundational work and documentation
 - University of California, Santa Cruz for computational resources
 - Members of the Kim Laboratory for valuable feedback and testing
-- All open source contributors who have helped improve PyISI
-
-## Want to Contribute?
-See our [CONTRIBUTING.md](CONTRIBUTING.md) guide for information on how to contribute to PyISI.
 
 ## Contact
 For questions about:
 - The original MATLAB implementation: ajuavinett@ucsd.edu
 - The Python implementation (PyISI): admmurra@ucsc.edu
-- Contributing to PyISI: admmurra@ucsc.edu
+- The Kim Laboratory: euiseok@ucsc.edu
+
+For detailed information about individual contributions, please see [CONTRIBUTORS.md](CONTRIBUTORS.md).
 
 ---
 *Note: This file is automatically updated. To add or modify entries, please submit a pull request with your changes.*
