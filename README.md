@@ -3,7 +3,7 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-PyISI is a modern Python library implementing the intrinsic signal imaging (ISI) analysis protocol described in [Juavinett et al. (2016)](https://doi.org/10.1038/nprot.2016.158). Developed in the [Kim Laboratory](https://mcd.ucsc.edu/faculty/kim-e.html) at UC Santa Cruz, this project modernizes the original MATLAB codebase with contemporary software engineering practices, improved performance, and enhanced usability.
+PyISI is a modern Python library implementing the intrinsic signal imaging (ISI) analysis protocol described in [Juavinett et al. (2016)](https://doi.org/10.1038/nprot.2016.158). Developed in the [Kim Laboratory]([https://mcd.ucsc.edu/faculty/kim-e.html](https://www.ejkimlab.com/)) at UC Santa Cruz, this project modernizes the original MATLAB codebase with contemporary software engineering practices, improved performance, and enhanced usability.
 
 ## Features
 
