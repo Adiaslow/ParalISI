@@ -98,7 +98,7 @@ For detailed information about project contributors, see [AUTHORS.md](AUTHORS.md
 
 ## Contributing
 
-Contributions are welcome! Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
+Contributions are welcome! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) file for details on:
 - Setting up the development environment
 - Running tests
 - Code style guidelines
