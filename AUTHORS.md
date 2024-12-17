@@ -14,34 +14,35 @@ Juavinett, A. L., Nauhaus, I., Garrett, M. E., Zhuang, J., & Callaway, E. M. (20
 
 ## Python Implementation (PyISI)
 
-### Lead Developers
-- Adam Murray - Project Lead, Core Implementation
+### Principal Investigator
+- **Euiseok Kim, Ph.D.**
+  - Assistant Professor of MCD Biology
+  - University of California, Santa Cruz
+
+### Lead Developer
+- **Adam Michael Murray**
+  - Undergraduate Researcher, University of California, Santa Cruz
   - Main architect of the Python port
   - Implementation of GPU acceleration
   - Testing framework development
+  - Project maintenance and documentation
 
-### Contributors
-<!--
-- [Contributor Name] - [Specific Contributions]
-- [Contributor Name] - [Specific Contributions]
--->
+### Scientific Advisor
+- **Matthew Jacobs**
+  - Graduate Student, MCD Biology
+  - University of California, Santa Cruz
 
-## Scientific Advisors
-<!--
-- [Advisor Name] - [Institution]
-- [Advisor Name] - [Institution]
--->
-## Technical Reviewers
-<!--
-- [Reviewer Name] - [Specific Focus Area]
-- [Reviewer Name] - [Specific Focus Area]
--->
+### Hardware Development
+- **Hylen Taylor James**
+  - Undergraduate Researcher
+  - University of California, Santa Cruz
+  - Hardware implementation and testing
 
 ## Acknowledgments
 We would like to thank:
 - The original authors for their foundational work and documentation
 - University of California, Santa Cruz for computational resources
-<!-- - [Name] for valuable feedback and testing-->
+- Members of the Kim Laboratory for valuable feedback and testing
 - All open source contributors who have helped improve PyISI
 
 ## Want to Contribute?
