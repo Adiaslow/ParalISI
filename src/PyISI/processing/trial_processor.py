@@ -1,4 +1,4 @@
-# src/PyISI/processing/signal.py
+# src/PyISI/processing/trial_processor.py
 
 import numpy as np
 from numpy.typing import NDArray
