@@ -96,7 +96,7 @@ If you use PyISI in your research, please cite:
 @software{pyisi2024,
   title = {PyISI: Python Intrinsic Signal Imaging Analysis},
   year = {2024},
-  url = {https://github.com/username/pyisi},
+  url = {https://github.com/Adiaslow/PyISI},
   version = {0.1.0}
 }
 ```
