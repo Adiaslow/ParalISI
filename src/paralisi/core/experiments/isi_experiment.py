@@ -7,8 +7,8 @@ import numpy as np
 from datetime import datetime
 from concurrent.futures import ProcessPoolExecutor
 from .base_experiment import BaseExperiment
-from ..configurations.experiment_config import ExperimentConfig
-from ..data.trial_data import TrialData  # Updated import
+from ..configurations import ExperimentConfig
+from ..data import TrialData  # Updated import
 from ...io.loaders.trial_data_loader import TrialDataLoader  # Updated import
 from ...processing.trial_processor import ConditionProcessor
 from ...utils.cuda_setup import setup_cuda

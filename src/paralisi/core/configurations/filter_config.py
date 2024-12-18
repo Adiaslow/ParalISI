@@ -1,7 +1,7 @@
 # src/paralisi/core/configurations/filter_config.py
 from typing import Optional, Tuple
 from dataclasses import dataclass
-from ..types.kernels import KernelType
+from ..types import KernelType
 
 @dataclass
 class FilterConfiguration:

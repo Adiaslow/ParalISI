@@ -5,11 +5,9 @@ from typing import Dict, List, Optional, Any
 import numpy as np
 import logging
 from .experiment_status import ExperimentStatus
-from ..data.trial_data import TrialData
+from ..data import TrialData
 from ..configurations import ExperimentConfig
-from ..exceptions.data_exceptions import ConfigurationError, DataLoadingError
-from ..exceptions.processing_exceptions import ProcessingError
-from ..exceptions.storage_exceptions import StorageError
+from ..exceptions import ConfigurationError, DataLoadingError, ProcessingError, StorageError
 
 logger = logging.getLogger(__name__)
 

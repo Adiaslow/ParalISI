@@ -1,4 +1,4 @@
-# src/paralisi/processing/filters/visual_area_segmenter.py
+# src/paralisi/processing/segmentation/visual_area_segmenter.py
 
 from typing import Dict, Tuple, Optional
 from numpy.typing import NDArray
@@ -7,11 +7,10 @@ import torch
 from scipy import ndimage
 from ...core.exceptions.processing_exceptions import SegmentationError
 from ...core.data.area_data import AreaData
-from ...core.interfaces.
-from ...core.interfaces.complex_image_filter import ComplexImageFilter
+from ...core.interfaces.segmenter import Segmenter  # Updated import
 from ...utils.decorators import validate_input, requires_cuda
 
-class VisualAreaSegmenter(ComplexImageFilter):
+class VisualAreaSegmenter(Segmenter):  # Updated inheritance
     """Segments visual areas from retinotopic maps using gradient-based detection.
 
     This is a modern Python implementation of the MATLAB getMouseAreasX.m logic,
@@ -44,7 +43,7 @@ class VisualAreaSegmenter(ComplexImageFilter):
 
     @validate_input
     def apply(self, data: Tuple[NDArray, NDArray], pixpermm: float) -> Dict[str, AreaData]:
-        """Apply the filter to segment visual areas from retinotopic maps.
+        """Apply the segmenter to segment visual areas from retinotopic maps.
 
         Parameters
         ----------

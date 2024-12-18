@@ -3,8 +3,8 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Optional
-from .acquisition_config import AcquisitionConfig
-from .processing_config import ProcessingConfig
+from . import AcquisitionConfig
+from . import ProcessingConfig
 
 @dataclass
 class ExperimentConfig:
