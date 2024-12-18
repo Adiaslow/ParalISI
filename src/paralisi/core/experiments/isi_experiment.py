@@ -5,9 +5,11 @@ from typing import Optional, List, Dict, Any
 import torch
 import numpy as np
 from datetime import datetime
+from concurrent.futures import ProcessPoolExecutor
 from .base_experiment import BaseExperiment
 from ..configurations.experiment_config import ExperimentConfig
-from ...io.loaders.trial_data_loader import TrialDataLoader
+from ..data.trial_data import TrialData  # Updated import
+from ...io.loaders.trial_data_loader import TrialDataLoader  # Updated import
 from ...processing.trial_processor import ConditionProcessor
 from ...utils.cuda_setup import setup_cuda
 from ...io.writers.data_writer import DataWriter
@@ -15,10 +17,7 @@ from ...io.writers.data_writer import DataWriter
 class ISIExperiment(BaseExperiment):
     """Class for handling ISI experiments."""
 
-    def __init__(self,
-        config: ExperimentConfig,
-        device: Optional[torch.device] = None
-    ) -> None:
+    def __init__(self, config: ExperimentConfig, device: Optional[torch.device] = None) -> None:
         """Initialize an ISI experiment.
 
         Args:
@@ -43,8 +42,7 @@ class ISIExperiment(BaseExperiment):
 
         # Initialize data containers
         self.raw_data: Dict[str, np.ndarray] = {}
-        # Using Dict[int, Dict[str, Any]] as TrialData type alias
-        self.processed_trials: Dict[int, Dict[str, Any]] = {}
+        self.processed_trials: Dict[int, TrialData] = {}
 
     def _load_trials(self, trial_indices: Optional[List[int]] = None) -> None:
         """Helper method to load trial data.
@@ -55,11 +53,13 @@ class ISIExperiment(BaseExperiment):
         if trial_indices is None:
             trial_indices = list(range(self.config.acquisition.frames_per_trial))
 
-        for trial_idx in trial_indices:
-            data = self.trial_data_loader.load_trial_data(
-                trial_idx,
-                self.config.acquisition
+        with ProcessPoolExecutor() as executor:
+            results = executor.map(
+                lambda idx: self.trial_data_loader.load_trial_data(idx, self.config.acquisition),
+                trial_indices
             )
+
+        for trial_idx, data in zip(trial_indices, results):
             self.raw_data[f"trial_{trial_idx}"] = data
 
         self._current_trial = 0
@@ -73,11 +73,14 @@ class ISIExperiment(BaseExperiment):
         """
         trials = [self.raw_data[f"trial_{idx}"] for idx in range(start_trial, end_trial) if f"trial_{idx}" in self.raw_data]
 
+        # Move trials to GPU
+        trials = [torch.tensor(trial, device=self.device) for trial in trials]
+
         # Use condition processor to process trials
         processed_data = self.condition_processor.process_condition_data(trials, self.config.processing)
 
         for i, key in enumerate(range(start_trial, end_trial)):
-            self.processed_trials[key] = {k: v[i] for k, v in processed_data.items()}
+            self.processed_trials[key] = {k: v.cpu().numpy() for k, v in processed_data.items()}
 
     def _save_results_to_disk(self, output_path: Path) -> None:
         """Helper method to save results to disk.
@@ -96,7 +99,7 @@ class ISIExperiment(BaseExperiment):
         writer.save_processed_data(
             data=transformed_data,
             metadata={'processing_date': datetime.now().isoformat()},
-            animal_id=self.config.animal_id,
-            experiment_id=self.config.experiment_id,
-            format='hdf5'
+            animal_id=self.config.animal_id,  # Replace with actual animal ID
+            experiment_id=self.config.experiment_id,  # Replace with actual experiment ID
+            format='hdf5'  # or 'npz' based on your requirement
         )

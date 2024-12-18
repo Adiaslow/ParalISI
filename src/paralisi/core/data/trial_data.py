@@ -6,6 +6,11 @@ from .trial_metadata import TrialMetadata
 
 @dataclass(frozen=True)
 class TrialData:
-    """Immutable container for trial data."""
+    """Immutable container for trial data.
+
+    Attributes:
+        raw_data (RawData): The raw data of the trial.
+        metadata (TrialMetadata): Metadata associated with the trial data.
+    """
     raw_data: RawData
     metadata: TrialMetadata

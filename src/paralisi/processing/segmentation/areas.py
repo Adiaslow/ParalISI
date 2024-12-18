@@ -1,26 +1,17 @@
-# src/PyISI/processing/segmentation/areas.py
+# src/paralisi/processing/filters/visual_area_segmenter.py
 
-from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Tuple, Optional
+from numpy.typing import NDArray
 import numpy as np
 import torch
-from numpy.typing import NDArray
 from scipy import ndimage
-from ...core.exceptions import SegmentationError
+from ...core.exceptions.processing_exceptions import SegmentationError
+from ...core.data.area_data import AreaData
+from ...core.interfaces.
+from ...core.interfaces.complex_image_filter import ComplexImageFilter
 from ...utils.decorators import validate_input, requires_cuda
 
-@dataclass
-class AreaInfo:
-    """Information about a detected visual area"""
-    id: int
-    name: str
-    boundary: NDArray  # Boolean mask of area boundary
-    center: Tuple[float, float]  # Center of mass coordinates
-    sign: float  # Visual field sign (1 or -1)
-    size: float  # Area size in mm²
-    neighbors: List[int]  # IDs of neighboring areas
-
-class VisualAreaSegmenter:
+class VisualAreaSegmenter(ComplexImageFilter):
     """Segments visual areas from retinotopic maps using gradient-based detection.
 
     This is a modern Python implementation of the MATLAB getMouseAreasX.m logic,
@@ -52,34 +43,27 @@ class VisualAreaSegmenter:
         self.device = torch.device('cuda' if self.use_gpu else 'cpu')
 
     @validate_input
-    def segment_areas(
-        self,
-        kmap_hor: NDArray,
-        kmap_vert: NDArray,
-        pixpermm: float
-    ) -> Dict[str, AreaInfo]:
-        """Segment visual areas from horizontal and vertical retinotopic maps.
+    def apply(self, data: Tuple[NDArray, NDArray], pixpermm: float) -> Dict[str, AreaData]:
+        """Apply the filter to segment visual areas from retinotopic maps.
 
         Parameters
         ----------
-        kmap_hor : NDArray
-            Horizontal retinotopic phase map
-        kmap_vert : NDArray
-            Vertical retinotopic phase map
+        data : Tuple[NDArray, NDArray]
+            Tuple containing horizontal and vertical retinotopic phase maps.
         pixpermm : float
-            Pixels per millimeter scale factor
+            Pixels per millimeter scale factor.
 
         Returns
         -------
-        Dict[str, AreaInfo]
-            Dictionary of detected areas with their properties
+        Dict[str, AreaData]
+            Dictionary of detected areas with their properties.
 
         Raises
         ------
         SegmentationError
-            If segmentation fails or produces invalid results
+            If segmentation fails or produces invalid results.
         """
-        # Validate input shapes and types
+        kmap_hor, kmap_vert = data
         if kmap_hor.shape != kmap_vert.shape:
             raise ValueError("Horizontal and vertical maps must have same shape")
 
@@ -89,8 +73,14 @@ class VisualAreaSegmenter:
                 kmap_hor = torch.from_numpy(kmap_hor).to(self.device)
                 kmap_vert = torch.from_numpy(kmap_vert).to(self.device)
 
-            # Compute gradients
-            grad_h, grad_v = self._compute_gradients(kmap_hor, kmap_vert)
+                # Compute gradients and convert back to numpy arrays
+                grad_h, grad_v = self._compute_gradients(
+                    kmap_hor.cpu().numpy(),
+                    kmap_vert.cpu().numpy()
+                )
+            else:
+                # Compute gradients directly if not using GPU
+                grad_h, grad_v = self._compute_gradients(kmap_hor, kmap_vert)
 
             # Generate sign map
             sign_map = self._compute_sign_map(grad_h, grad_v)
@@ -165,8 +155,11 @@ class VisualAreaSegmenter:
         boundaries: NDArray,
         sign_map: NDArray,
         pixpermm: float
-    ) -> Dict[str, AreaInfo]:
+    ) -> Dict[str, AreaData]:
         """Extract individual areas from boundary map."""
+        # Ensure boundaries are a boolean array
+        boundaries = np.asarray(boundaries, dtype=bool)
+
         # Label connected components
         labels, num_labels = ndimage.label(~boundaries)
 
@@ -187,30 +180,31 @@ class VisualAreaSegmenter:
 
             # Calculate center of mass
             cy, cx = ndimage.center_of_mass(mask)
+            cy, cx = float(cy), float(cx)
 
             # Find neighbors
             dilated = ndimage.binary_dilation(mask)
             neighbor_ids = set(labels[dilated & ~mask]) - {0, label_id}
 
-            # Create AreaInfo object
-            area_info = AreaInfo(
+            # Create AreaData object
+            area_data = AreaData(
                 id=label_id,
                 name=f"Area_{label_id}",
                 boundary=mask,
-                center=(float(cx), float(cy)),
+                center=(cx, cy),
                 sign=float(sign),
                 size=float(area_size),
                 neighbors=sorted(neighbor_ids)
             )
 
-            areas[f"Area_{label_id}"] = area_info
+            areas[f"Area_{label_id}"] = area_data
 
         return areas
 
     def _post_process_areas(
         self,
-        areas: Dict[str, AreaInfo]
-    ) -> Dict[str, AreaInfo]:
+        areas: Dict[str, AreaData]
+    ) -> Dict[str, AreaData]:
         """Post-process detected areas to clean up results."""
         # Add V1 identification
         v1_id = self._identify_v1(areas)
@@ -225,7 +219,7 @@ class VisualAreaSegmenter:
 
     def _identify_v1(
         self,
-        areas: Dict[str, AreaInfo]
+        areas: Dict[str, AreaData]
     ) -> Optional[str]:
         """Identify the V1 area based on size and location."""
         # Find largest area near image center
@@ -253,9 +247,8 @@ if __name__ == "__main__":
     )
 
     # Run segmentation
-    areas = segmenter.segment_areas(
-        kmap_hor=kmap_hor,
-        kmap_vert=kmap_vert,
+    areas = segmenter.apply(
+        data=(kmap_hor, kmap_vert),
         pixpermm=10.0
     )
 

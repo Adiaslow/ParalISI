@@ -1,28 +1,15 @@
-# src/paralisi/processing/filters.py
+# src/paralisi/processing/filters/spatial_image_filter.py
 
 import numpy as np
-from enum import Enum
 from typing import Optional, Tuple
-from dataclasses import dataclass
 from scipy import signal
-import torch
 from numpy.typing import NDArray
-from ..core.exceptions import ProcessingError
+from ...core.exceptions import ProcessingError
+from ...core.configurations.filter_config import FilterConfiguration
+from ...core.types.kernels import KernelType
+from ...core.interfaces.image_filter import ImageFilter
 
-class KernelType(Enum):
-    """Types of spatial filter kernels"""
-    GAUSSIAN = "gaussian"
-    HANN = "hann"
-    DISK = "disk"
-
-@dataclass
-class FilterConfiguration:
-    """Configuration for spatial filter creation"""
-    high_pass_params: Optional[Tuple[float, KernelType]] = None  # (width, type)
-    low_pass_params: Optional[Tuple[float, KernelType]] = None   # (width, type)
-    normalize: bool = True
-
-class SpatialFilter:
+class SpatialImageFilter(ImageFilter):
     """Creates and applies spatial filters for image processing.
 
     Implements configurable spatial filtering with support for:
@@ -37,9 +24,10 @@ class SpatialFilter:
         Parameters
         ----------
         kernel_size : Optional[Tuple[int, int]]
-            Fixed kernel size, if not computed from filter width
+            Fixed kernel size, if not computed from filter width.
         """
         self.kernel_size = kernel_size
+        self.kernel = None
 
     def create_kernel(
         self,
@@ -50,12 +38,17 @@ class SpatialFilter:
         Parameters
         ----------
         config : FilterConfiguration
-            Filter specification including component parameters
+            Filter specification including component parameters.
 
         Returns
         -------
         NDArray
-            2D filter kernel
+            2D filter kernel.
+
+        Raises
+        ------
+        ProcessingError
+            If filter creation fails.
         """
         try:
             kernel = None
@@ -63,7 +56,7 @@ class SpatialFilter:
             if config.high_pass_params:
                 width, kernel_type = config.high_pass_params
                 base_kernel = self._create_base_kernel(width, kernel_type)
-                kernel = np.eye(*base_kernel.shape) - base_kernel
+                kernel = np.eye(base_kernel.shape[0], base_kernel.shape[1]) - base_kernel
 
             if config.low_pass_params:
                 width, kernel_type = config.low_pass_params
@@ -80,6 +73,7 @@ class SpatialFilter:
             if config.normalize:
                 kernel = kernel / np.abs(kernel).sum()
 
+            self.kernel = kernel
             return kernel
 
         except Exception as e:
@@ -90,7 +84,20 @@ class SpatialFilter:
         width: float,
         kernel_type: KernelType
     ) -> NDArray:
-        """Create base filter kernel of specified type."""
+        """Create base filter kernel of specified type.
+
+        Parameters
+        ----------
+        width : float
+            Width or radius of the kernel.
+        kernel_type : KernelType
+            Type of kernel to create.
+
+        Returns
+        -------
+        NDArray
+            Base filter kernel.
+        """
         size = self.kernel_size or (int(3 * width), int(3 * width))
 
         if kernel_type == KernelType.GAUSSIAN:
@@ -105,7 +112,20 @@ class SpatialFilter:
         size: Tuple[int, int],
         sigma: float
     ) -> NDArray:
-        """Create Gaussian filter kernel"""
+        """Create Gaussian filter kernel.
+
+        Parameters
+        ----------
+        size : Tuple[int, int]
+            Size of the kernel.
+        sigma : float
+            Standard deviation of the Gaussian.
+
+        Returns
+        -------
+        NDArray
+            Gaussian filter kernel.
+        """
         y, x = np.ogrid[-size[0]//2:size[0]//2, -size[1]//2:size[1]//2]
         kernel = np.exp(-(x*x + y*y)/(2*sigma*sigma))
         return kernel / kernel.sum()
@@ -115,9 +135,22 @@ class SpatialFilter:
         size: Tuple[int, int],
         width: float
     ) -> NDArray:
-        """Create 2D Hann window filter"""
-        hann_x = signal.hann(int(width))
-        hann_y = signal.hann(int(width))
+        """Create 2D Hann window filter.
+
+        Parameters
+        ----------
+        size : Tuple[int, int]
+            Size of the kernel.
+        width : float
+            Width of the Hann window.
+
+        Returns
+        -------
+        NDArray
+            Hann window filter kernel.
+        """
+        hann_x = signal.windows.hann(int(width))
+        hann_y = signal.windows.hann(int(width))
         kernel = np.outer(hann_y, hann_x)
         return kernel / kernel.sum()
 
@@ -126,8 +159,39 @@ class SpatialFilter:
         size: Tuple[int, int],
         radius: float
     ) -> NDArray:
-        """Create disk-shaped filter"""
+        """Create disk-shaped filter.
+
+        Parameters
+        ----------
+        size : Tuple[int, int]
+            Size of the kernel.
+        radius : float
+            Radius of the disk.
+
+        Returns
+        -------
+        NDArray
+            Disk-shaped filter kernel.
+        """
         y, x = np.ogrid[-size[0]//2:size[0]//2, -size[1]//2:size[1]//2]
         disk = x*x + y*y <= radius*radius
         kernel = disk.astype(float)
         return kernel / kernel.sum()
+
+    def apply(self, data: NDArray) -> NDArray:
+        """Apply the filter to the provided data.
+
+        Parameters
+        ----------
+        data : NDArray
+            The data to be filtered.
+
+        Returns
+        -------
+        NDArray
+            The filtered data.
+        """
+        if self.kernel is None:
+            raise ProcessingError("Filter kernel has not been created.")
+
+        return signal.convolve2d(data, self.kernel, mode='same')
