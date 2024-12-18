@@ -3,17 +3,8 @@
 import numpy as np
 from numpy.typing import NDArray
 from typing import Dict, List, Tuple
-from dataclasses import dataclass
+from ..core.configurations.trial_processing_config import TrialProcessingConfig
 from ..core.exceptions import ProcessingError
-
-@dataclass
-class TrialProcessingConfig:
-    """Configuration for trial processing"""
-    time_window: Tuple[int, int]  # Analysis time window
-    baseline_window: Tuple[int, int]  # Baseline time window
-    normalize: bool = True  # Whether to normalize by baseline
-    split_trials: bool = True  # Whether to split odd/even trials
-    compute_variance: bool = False  # Whether to compute trial variance
 
 class ConditionProcessor:
     """Processes trial data grouped by experimental conditions"""

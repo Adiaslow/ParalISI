@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, List
 import numpy as np
+from scipy.stats import linregress
 from numpy.typing import NDArray
 from ..exceptions import ValidationError
 
@@ -49,73 +50,81 @@ class DataValidator:
         self.max_motion = max_motion
         self.min_sync_quality = min_sync_quality
 
-    def validate_experiment(
-        self,
-        data: NDArray,
-        sync_signal: NDArray,
-        metadata: Dict
-    ) -> ValidationResult:
-        """Validate complete experimental dataset.
+        def validate_experiment(
+            self,
+            data: NDArray,
+            sync_signal: NDArray,
+            metadata: Dict
+        ) -> ValidationResult:
+            """Validate complete experimental dataset.
 
-        Parameters
-        ----------
-        data : NDArray
-            Raw imaging data (time, height, width)
-        sync_signal : NDArray
-            Synchronization signal
-        metadata : Dict
-            Experiment metadata
+            Parameters
+            ----------
+            data : NDArray
+                Raw imaging data (time, height, width)
+            sync_signal : NDArray
+                Synchronization signal
+            metadata : Dict
+                Experiment metadata
 
-        Returns
-        -------
-        ValidationResult
-            Validation results and recommendations
-        """
-        try:
-            issues = []
-            recommendations = []
-            metrics = {}
+            Returns
+            -------
+            ValidationResult
+                Validation results and recommendations
+            """
+            try:
+                issues = []
+                recommendations = []
+                metrics = {}
 
-            # Check data integrity
-            self._validate_data_integrity(data, metadata)
+                # Check data integrity
+                self._validate_data_integrity(data, metadata)
 
-            # Check sync signal
-            sync_quality = self._validate_sync_signal(sync_signal)
-            metrics['sync_quality'] = sync_quality
-            if sync_quality < self.min_sync_quality:
-                issues.append(f"Poor sync signal quality: {sync_quality:.2f}")
-                recommendations.append("Check stimulus timing and sync connections")
+                # Check sync signal
+                sync_quality = self._validate_sync_signal(sync_signal)
+                metrics['sync_quality'] = sync_quality
+                if sync_quality < self.min_sync_quality:
+                    issues.append(f"Poor sync signal quality: {sync_quality:.2f}")
+                    recommendations.append("Check stimulus timing and sync connections")
 
-            # Check for motion artifacts
-            motion_metric = self._detect_motion_artifacts(data)
-            metrics['motion'] = motion_metric
-            if motion_metric > self.max_motion:
-                issues.append(f"Excessive motion detected: {motion_metric:.2f} pixels")
-                recommendations.append("Consider motion correction or data exclusion")
+                # Check for motion artifacts
+                motion_metric = self._detect_motion_artifacts(data)
+                metrics['motion'] = motion_metric
+                if motion_metric > self.max_motion:
+                    issues.append(f"Excessive motion detected: {motion_metric:.2f} pixels")
+                    recommendations.append("Consider motion correction or data exclusion")
 
-            # Calculate SNR
-            snr = self._calculate_snr(data)
-            metrics['snr'] = snr
-            if snr < self.threshold_snr:
-                issues.append(f"Low SNR: {snr:.2f}")
-                recommendations.append("Check imaging parameters and focus")
+                # Calculate SNR
+                snr = self._calculate_snr(data)
+                metrics['snr'] = snr
+                if snr < self.threshold_snr:
+                    issues.append(f"Low SNR: {snr:.2f}")
+                    recommendations.append("Check imaging parameters and focus")
 
-            # Check for photobleaching
-            bleaching_metric = self._check_photobleaching(data)
-            metrics['bleaching'] = bleaching_metric
-            if bleaching_metric > 0.2:  # 20% signal decay
-                issues.append(f"Significant photobleaching detected: {bleaching_metric:.1%}")
-                recommendations.append("Reduce light intensity or exposure time")
+                # Check for photobleaching
+                mean_intensity = np.mean(data, axis=(1, 2))
+                time_points = np.arange(len(mean_intensity))
+                slope, intercept, r_value, p_value, std_err = linregress(time_points, mean_intensity)
+                initial_intensity = float(mean_intensity[0])
+                if initial_intensity == 0:
+                    bleaching_metric = 0.0
+                else:
+                    bleaching_metric = float(abs(slope * len(mean_intensity) / initial_intensity))
 
-            return ValidationResult(
-                passed=len(issues) == 0,
-                metrics=metrics,
-                issues=issues,
-                recommendations=recommendations
-            )
+                metrics['bleaching'] = bleaching_metric
+                if bleaching_metric > 0.2:  # 20% signal decay
+                    issues.append(f"Significant photobleaching detected: {bleaching_metric:.1%}")
+                    recommendations.append("Reduce light intensity or exposure time")
 
-        except Exception as e:
-            raise ValidationError(f"Data validation failed: {str(e)}") from e
+                return ValidationResult(
+                    passed=len(issues) == 0,
+                    metrics=metrics,
+                    issues=issues,
+                    recommendations=recommendations
+                )
+
+            except Exception as e:
+                raise ValidationError(f"Data validation failed: {str(e)}") from e
 
     def _validate_data_integrity(
         self,
@@ -159,7 +168,7 @@ class DataValidator:
         peak_heights = properties['peak_heights']
         amplitude_consistency = 1.0 - np.std(peak_heights) / np.mean(peak_heights)
 
-        return np.mean([timing_regularity, amplitude_consistency])
+        return float(np.mean([timing_regularity, amplitude_consistency]))
 
     def _detect_motion_artifacts(
         self,
@@ -177,7 +186,7 @@ class DataValidator:
         if intensity_range > 0:
             motion_metric /= intensity_range
 
-        return motion_metric
+        return float(motion_metric)
 
     def _calculate_snr(
         self,
@@ -204,10 +213,15 @@ class DataValidator:
 
         # Fit linear trend
         time_points = np.arange(len(mean_intensity))
-        from scipy.stats import linregress
-        slope, _, _, _, _ = linregress(time_points, mean_intensity)
+
+        # Extract slope from linregress result
+        slope, intercept, r_value, p_value, std_err = linregress(time_points, mean_intensity)
 
         # Calculate relative signal decay
-        total_decay = (slope * len(mean_intensity)) / mean_intensity[0]
+        initial_intensity = float(mean_intensity[0])
+        if initial_intensity == 0:
+            return 0.0
 
-        return abs(total_decay)
+        total_decay = float(slope) * len(mean_intensity) / initial_intensity
+
+        return float(abs(total_decay))

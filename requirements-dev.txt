@@ -1,0 +1,22 @@
+# Core dependencies
+h5py
+numpy
+
+# Testing dependencies
+pytest
+pytest-cov
+
+# Linting and formatting dependencies
+flake8
+black
+isort
+
+# Type checking dependencies
+mypy
+
+# Documentation dependencies
+Sphinx
+sphinx-rtd-theme
+
+# Additional dependencies (if any)
+# Add any other dependencies your project might require

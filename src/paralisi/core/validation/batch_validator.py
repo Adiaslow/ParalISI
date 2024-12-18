@@ -11,38 +11,46 @@ class BatchValidator:
     def __init__(self, validator: DataValidator):
         self.validator = validator
 
-    def validate_batch(
-        self,
-        data_paths: List[Path],
-        group_metadata: Optional[Dict] = None
-    ) -> Dict[str, ValidationResult]:
-        """Validate multiple experiments"""
-        results = {}
+        def validate_batch(
+            self,
+            data_paths: List[Path],
+            group_metadata: Optional[Dict] = None
+        ) -> Dict[str, ValidationResult]:
+            """Validate multiple experiments"""
+            results = {}
 
-        for path in data_paths:
-            try:
-                # Load data (implement data loading logic)
-                data = self._load_data(path)
-                sync = self._load_sync(path)
-                metadata = self._load_metadata(path)
+            for path in data_paths:
+                try:
+                    # Load data (implement data loading logic)
+                    data = self._load_data(path)
+                    if data is None:
+                        raise ValueError("Failed to load data")
 
-                # Update metadata with group info
-                if group_metadata:
-                    metadata.update(group_metadata)
+                    sync = self._load_sync(path)
+                    if sync is None:
+                        raise ValueError("Failed to load sync signal")
 
-                # Validate individual experiment
-                result = self.validator.validate_experiment(data, sync, metadata)
-                results[str(path)] = result
+                    metadata = self._load_metadata(path)
+                    if metadata is None:
+                        metadata = {}
 
-            except Exception as e:
-                results[str(path)] = ValidationResult(
-                    passed=False,
-                    metrics={},
-                    issues=[f"Validation failed: {str(e)}"],
-                    recommendations=["Check data files and format"]
-                )
+                    # Update metadata with group info
+                    if group_metadata:
+                        metadata.update(group_metadata)
 
-        return results
+                    # Validate individual experiment
+                    result = self.validator.validate_experiment(data, sync, metadata)
+                    results[str(path)] = result
+
+                except Exception as e:
+                    results[str(path)] = ValidationResult(
+                        passed=False,
+                        metrics={},
+                        issues=[f"Validation failed: {str(e)}"],
+                        recommendations=["Check data files and format"]
+                    )
+
+            return results
 
     def _load_data(self, path: Path):
         # Implement data loading logic here

@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 from typing import Dict, Any
-from ..types.data_types import TrialMetadata
+from ..data.trial_metadata import TrialMetadata
 
 class MetadataStore:
     """Manages trial metadata storage and retrieval."""

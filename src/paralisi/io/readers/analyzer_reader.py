@@ -5,9 +5,9 @@
 from pathlib import Path
 import h5py
 import numpy as np
-from typing import Dict, Any, Union
+from typing import Dict, Any, Union, Optional
 from ...core.exceptions.io_exceptions import IOError
-from ...core.data.analyzer_data import AnalyzerData  # Updated import
+from ...core.data.analyzer_data import AnalyzerData
 
 class AnalyzerReader:
     """Reads and parses analyzer files.
@@ -80,33 +80,38 @@ class AnalyzerReader:
         """Load experimental parameters"""
         params = {}
         param_group = f.get('Analyzer/P', None)
-        if param_group is not None:
+        if isinstance(param_group, h5py.Group):
             for key in param_group.keys():
-                params[key] = param_group[key][()]
+                param_dataset = param_group.get(key)
+                if isinstance(param_dataset, h5py.Dataset):
+                    params[key] = param_dataset[()]
         return params
 
     def _load_metadata(self, f: h5py.File) -> Dict[str, Any]:
         """Load experiment metadata"""
         metadata = {}
         meta_group = f.get('Analyzer/M', None)
-        if meta_group is not None:
+        if isinstance(meta_group, h5py.Group):
             for key in meta_group.keys():
-                metadata[key] = meta_group[key][()]
+                meta_dataset = meta_group.get(key)
+                if isinstance(meta_dataset, h5py.Dataset):
+                    metadata[key] = meta_dataset[()]
         return metadata
 
     def _load_conditions(self, f: h5py.File) -> Dict[str, Any]:
         """Load experimental conditions"""
         conditions = {}
         cond_group = f.get('Analyzer/loops/conds', None)
-        if cond_group is not None:
+        if isinstance(cond_group, h5py.Group):
             for i in range(len(cond_group)):
-                cond_data = cond_group[f'{i}'][()]
-                conditions[f'condition_{i}'] = cond_data
+                cond_data = cond_group.get(f'{i}')
+                if isinstance(cond_data, h5py.Dataset):
+                    conditions[f'condition_{i}'] = cond_data[()]
         return conditions
 
     def _load_timestamps(self, f: h5py.File) -> np.ndarray:
         """Load timing information"""
         time_data = f.get('Analyzer/timeStamps', None)
-        if time_data is not None:
+        if time_data is not None and isinstance(time_data, h5py.Dataset):
             return np.array(time_data)
         return np.array([])

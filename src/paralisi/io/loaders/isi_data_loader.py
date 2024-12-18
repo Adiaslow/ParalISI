@@ -6,9 +6,10 @@ from typing import Dict, Any, Optional
 import h5py
 import numpy as np
 
+from numpy.typing import NDArray
 from ...core.interfaces.data_loader import DataLoader
 from ...core.data.data import RawData
-from ...core.exceptions.io_exceptions import DataLoadingError
+from ...core.exceptions.data_exceptions import DataLoadingError
 
 class ISIDataLoader(DataLoader):
     """Loads intrinsic signal imaging data from HDF5 files."""
@@ -27,9 +28,8 @@ class ISIDataLoader(DataLoader):
         """
         try:
             with h5py.File(path, "r") as f:
-                data = np.array(f["imaging_data"])
-                metadata = dict(f.attrs)
-                return RawData(data=data, metadata=metadata)
+                data = np.array(f["imaging_data"], dtype=np.float64)
+                return data
         except (OSError, KeyError) as e:
             raise DataLoadingError(f"Failed to load {path}: {str(e)}")
 

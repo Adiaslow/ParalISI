@@ -46,86 +46,88 @@ class ExperimentManager:
         logger.info(f"Initialized ExperimentManager with base_path={base_path}")
 
     def process_trial(
-        self,
-        trial_id: int,
-        force_reload: bool = False
-    ) -> Optional[ProcessedTrial]:
-        """Process a single trial with improved error handling.
+            self,
+            trial_id: int,
+            force_reload: bool = False
+        ) -> Optional[ProcessedTrial]:
+            """Process a single trial with improved error handling.
 
-        Args:
-            trial_id: ID of trial to process
-            force_reload: Whether to force data reload
+            Args:
+                trial_id: ID of trial to process
+                force_reload: Whether to force data reload
 
-        Returns:
-            Processed trial data if successful, None if trial not found
+            Returns:
+                Processed trial data if successful, None if trial not found
 
-        Raises:
-            ProcessingError: If processing fails
-            DataLoadingError: If data loading fails
-        """
-        logger.debug(f"Processing trial {trial_id}")
+            Raises:
+                ProcessingError: If processing fails
+                DataLoadingError: If data loading fails
+            """
+            logger.debug(f"Processing trial {trial_id}")
 
-        try:
-            # Get trial data
-            trial_path = self.base_path / f"trial_{trial_id}.npy"
-            trial_data = self.data_store.get_trial(trial_id, trial_path, force_reload)
+            try:
+                # Get trial data
+                trial_path = self.base_path / f"trial_{trial_id}.npy"
+                trial_data = self.data_store.get_trial(trial_id, trial_path, force_reload)
 
-            if trial_data is None:
-                logger.warning(f"Trial {trial_id} not found")
-                return None
+                if trial_data is None:
+                    logger.warning(f"Trial {trial_id} not found")
+                    return None
 
-            # Validate and process
-            if not self.processor.validate(trial_data.raw_data):
-                raise ProcessingError(f"Invalid data for trial {trial_id}")
+                # Validate and process
+                if not self.processor.validate(trial_data.raw_data):
+                    raise ProcessingError(f"Invalid data for trial {trial_id}")
 
-            processed_data = self.processor.process(trial_data.raw_data)
-            processed_trial = ProcessedTrial(
-                processed_data=processed_data,
-                masks=self._generate_masks(processed_data),
-                metadata=trial_data.metadata
-            )
+                processed_data = self.processor.process(trial_data.raw_data)
+                trial_data_for_masks = TrialData(raw_data=processed_data, metadata=trial_data.metadata)
+                processed_trial = ProcessedTrial(
+                    processed_data=processed_data,
+                    masks=self._generate_masks(trial_data_for_masks),
+                    metadata=trial_data.metadata
+                )
 
-            self._processed_trials[trial_id] = processed_trial
-            logger.info(f"Successfully processed trial {trial_id}")
-            return processed_trial
+                self._processed_trials[trial_id] = processed_trial
+                logger.info(f"Successfully processed trial {trial_id}")
+                return processed_trial
 
-        except Exception as e:
-            logger.error(f"Error processing trial {trial_id}: {str(e)}")
-            raise ProcessingError(f"Failed to process trial {trial_id}") from e
+            except Exception as e:
+                logger.error(f"Error processing trial {trial_id}: {str(e)}")
+                raise ProcessingError(f"Failed to process trial {trial_id}") from e
 
     def process_trials(
-        self,
-        trial_ids: List[int],
-        parallel: bool = False
-    ) -> Dict[int, ProcessedTrial]:
-        """Process multiple trials, optionally in parallel.
+            self,
+            trial_ids: List[int],
+            parallel: bool = False
+        ) -> Dict[int, ProcessedTrial]:
+            """Process multiple trials, optionally in parallel.
 
-        Args:
-            trial_ids: List of trial IDs to process
-            parallel: Whether to process in parallel
+            Args:
+                trial_ids: List of trial IDs to process
+                parallel: Whether to process in parallel
 
-        Returns:
-            Dictionary mapping trial IDs to processed trials
-        """
-        if parallel and self.max_workers > 1:
-            with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-                futures = {
-                    trial_id: executor.submit(self.process_trial, trial_id)
-                    for trial_id in trial_ids
-                }
+            Returns:
+                Dictionary mapping trial IDs to processed trials
+            """
+            if parallel and self.max_workers > 1:
+                with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+                    futures = {
+                        trial_id: executor.submit(self.process_trial, trial_id)
+                        for trial_id in trial_ids
+                    }
+                    results = {}
+                    for trial_id, future in futures.items():
+                        result = future.result()
+                        if result is not None:
+                            results[trial_id] = result
+                    return results
+            else:
                 return {
-                    trial_id: future.result()
-                    for trial_id, future in futures.items()
-                    if future.result() is not None
+                    trial_id: processed
+                    for trial_id in trial_ids
+                    if (processed := self.process_trial(trial_id)) is not None
                 }
-        else:
-            return {
-                trial_id: processed
-                for trial_id in trial_ids
-                if (processed := self.process_trial(trial_id)) is not None
-            }
 
-    def _generate_masks(self, processed_data: TrialData) -> Dict[str, Any]:
+    def _generate_masks(self, processed_data: TrialData) -> Dict[str, object]:
         """Generate masks for processed data.
 
         To be implemented based on specific masking requirements.
