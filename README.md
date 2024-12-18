@@ -1,13 +1,13 @@
-# PyISI: Modern Python Implementation of Intrinsic Signal Imaging Analysis
+# ParalISI: Modern Python Implementation of Intrinsic Signal Imaging Analysis
 
-[![PyPI version](https://img.shields.io/pypi/v/pyisi.svg)](https://pypi.org/project/pyisi/)
-[![Documentation Status](https://readthedocs.org/projects/pyisi/badge/?version=latest)](https://pyisi.readthedocs.io/en/latest/?badge=latest)
-[![Build Status](https://github.com/Adiaslow/PyISI/workflows/Python%20package/badge.svg)](https://github.com/Adiaslow/PyISI/actions)
-[![Code Coverage](https://codecov.io/gh/Adiaslow/PyISI/branch/main/graph/badge.svg)](https://codecov.io/gh/Adiaslow/PyISI)
+[![PyPI version](https://img.shields.io/pypi/v/paralisi.svg)](https://pypi.org/project/paralisi/)
+[![Documentation Status](https://readthedocs.org/projects/paralisi/badge/?version=latest)](https://paralisi.readthedocs.io/en/latest/?badge=latest)
+[![Build Status](https://github.com/Adiaslow/ParalISI/workflows/Python%20package/badge.svg)](https://github.com/Adiaslow/ParalISI/actions)
+[![Code Coverage](https://codecov.io/gh/Adiaslow/ParalISI/branch/main/graph/badge.svg)](https://codecov.io/gh/Adiaslow/ParalISI)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-PyISI is a modern Python library implementing the intrinsic signal imaging (ISI) analysis protocol described in [Juavinett et al. (2016)](https://doi.org/10.1038/nprot.2016.158). Developed in the [Kim Laboratory]([https://mcd.ucsc.edu/faculty/kim-e.html](https://www.ejkimlab.com/)) at UC Santa Cruz, this project modernizes the original MATLAB codebase with contemporary software engineering practices, improved performance, and enhanced usability.
+ParalISI is a modern Python library implementing the intrinsic signal imaging (ISI) analysis protocol described in [Juavinett et al. (2016)](https://doi.org/10.1038/nprot.2016.158). Developed in the [Kim Laboratory]([https://mcd.ucsc.edu/faculty/kim-e.html](https://www.ejkimlab.com/)) at UC Santa Cruz, this project modernizes the original MATLAB codebase with contemporary software engineering practices, improved performance, and enhanced usability.
 
 ## Features
 
@@ -30,10 +30,10 @@ PyISI is a modern Python library implementing the intrinsic signal imaging (ISI)
 
 ```bash
 # Basic installation
-pip install pyisi
+pip install paralisi
 
 # With GPU support
-pip install pyisi[cuda]
+pip install paralisi[cuda]
 ```
 
 ### Requirements
@@ -47,7 +47,7 @@ pip install pyisi[cuda]
 ## Quick Start
 
 ```python
-import pyisi
+import paralisi
 from pathlib import Path
 
 try:
@@ -55,31 +55,31 @@ try:
     data_path = Path("/path/to/data").resolve()
 
     # Load and preprocess imaging data
-    data = pyisi.load_data(data_path)
-    preprocessed = pyisi.preprocess(data)
+    data = paralisi.load_data(data_path)
+    preprocessed = paralisi.preprocess(data)
 
     # Generate retinotopic maps
-    alt_map, az_map = pyisi.compute_retinotopy(preprocessed)
+    alt_map, az_map = paralisi.compute_retinotopy(preprocessed)
 
     # Segment visual areas
-    areas = pyisi.segment_areas(alt_map, az_map)
+    areas = paralisi.segment_areas(alt_map, az_map)
 
     # Visualize results
-    pyisi.plot_visual_areas(areas)
+    paralisi.plot_visual_areas(areas)
 
 except FileNotFoundError:
     print("Data file not found. Please check the path.")
-except pyisi.exceptions.ProcessingError as e:
+except paralisi.exceptions.ProcessingError as e:
     print(f"Processing error: {e}")
 ```
 
 ## Key Components
 
 ### Data Processing
-- `pyisi.io`: Efficient data loading and management
-- `pyisi.processing`: Core signal processing algorithms
-- `pyisi.analysis`: Advanced analysis tools
-- `pyisi.visualization`: Publication-quality plotting
+- `paralisi.io`: Efficient data loading and management
+- `paralisi.processing`: Core signal processing algorithms
+- `paralisi.analysis`: Advanced analysis tools
+- `paralisi.visualization`: Publication-quality plotting
 
 ### GPU Acceleration
 - Parallel processing of large imaging datasets
@@ -93,7 +93,7 @@ except pyisi.exceptions.ProcessingError as e:
 
 ## Documentation
 
-Full documentation is available at [docs.pyisi.org](https://docs.pyisi.org), including:
+Full documentation is available at [docs.paralisi.org](https://docs.paralisi.org), including:
 - Detailed API reference
 - Step-by-step tutorials
 - Best practices for ISI analysis
@@ -120,7 +120,7 @@ Contributions are welcome! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) fil
 
 ## Citation
 
-If you use PyISI in your research, please cite both the original protocol and this implementation:
+If you use ParalISI in your research, please cite both the original protocol and this implementation:
 
 ```bibtex
 @article{juavinett2016automated,
@@ -133,11 +133,11 @@ If you use PyISI in your research, please cite both the original protocol and th
     year={2016}
 }
 
-@software{murray2024pyisi,
-    title={PyISI: Python Implementation of Intrinsic Signal Imaging Analysis},
+@software{murray2024paralisi,
+    title={ParalISI: Python Implementation of Intrinsic Signal Imaging Analysis},
     author={Murray, Adam M},
     year={2024},
-    url={https://github.com/Adiaslow/PyISI},
+    url={https://github.com/Adiaslow/ParalISI},
     version={0.1.0}
 }
 ```
