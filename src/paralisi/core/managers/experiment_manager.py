@@ -1,13 +1,13 @@
-# src/pyisi/core/managers.py
-"""Experiment management for PyISI."""
+# src/paralisi/core/managers/experiment_manager.py
+
 from pathlib import Path
 from typing import Optional, List, Dict
 import logging
 from concurrent.futures import ThreadPoolExecutor
-from .interfaces import DataProcessor
-from .types.data_types import ProcessedTrial, TrialData
-from .stores import TrialDataStore
-from .exceptions import ProcessingError
+from ..interfaces.data_processor import DataProcessor
+from ..data import ProcessedTrial, TrialData
+from ..stores import TrialDataStore
+from ..exceptions import ProcessingError
 
 logger = logging.getLogger(__name__)
 

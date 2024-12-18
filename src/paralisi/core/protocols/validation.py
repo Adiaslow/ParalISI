@@ -1,8 +1,8 @@
-# src/pyisi/core/protocols/validation.py
+# src/paralisi/core/protocols/validation.py
 """Data validation protocols."""
 
 from typing import Protocol
-from ..types.data_types import RawData
+from ..data.data import RawData
 
 class DataValidator(Protocol):
     """Interface for data validation strategies."""

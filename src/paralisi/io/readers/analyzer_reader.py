@@ -1,22 +1,13 @@
-# src/PyISI/io/readers.py
+# src/paralisi/io/readers/analyzer_reader.py
+
+"""Analyzer file reader."""
 
 from pathlib import Path
 import h5py
 import numpy as np
-import json
-from typing import Dict, Any, Optional, Union
-from dataclasses import dataclass
-from ..core.exceptions import IOError
-
-@dataclass
-class AnalyzerData:
-    """Container for analyzer file data"""
-    animal_id: str
-    experiment_id: str
-    params: Dict[str, Any]
-    metadata: Dict[str, Any]
-    conditions: Dict[str, Any]
-    timestamps: np.ndarray
+from typing import Dict, Any, Union
+from ...core.exceptions.io_exceptions import IOError
+from ...core.data.analyzer_data import AnalyzerData  # Updated import
 
 class AnalyzerReader:
     """Reads and parses analyzer files.
@@ -119,54 +110,3 @@ class AnalyzerReader:
         if time_data is not None:
             return np.array(time_data)
         return np.array([])
-
-class ExperimentReader:
-    """Reads experimental data and parameters.
-
-    This class provides functionality for loading experimental parameters
-    and data files.
-    """
-
-    def __init__(self, data_path: Union[str, Path]):
-        self.data_path = Path(data_path)
-
-    def load_params(
-        self,
-        unit: str,
-        experiment: str,
-        param_file: Optional[str] = None
-    ) -> Dict[str, Any]:
-        """Load experimental parameters.
-
-        Parameters
-        ----------
-        unit : str
-            Unit identifier
-        experiment : str
-            Experiment identifier
-        param_file : Optional[str]
-            Override default parameter file name
-
-        Returns
-        -------
-        Dict[str, Any]
-            Parameter dictionary
-        """
-        try:
-            # Default parameter file name if not specified
-            if param_file is None:
-                param_file = f"{unit}_{experiment}_params.json"
-
-            file_path = self.data_path / param_file
-
-            if not file_path.exists():
-                raise FileNotFoundError(f"Parameter file not found: {file_path}")
-
-            # Load and parse parameters
-            with open(file_path, 'r') as f:
-                params = json.load(f)
-
-            return params
-
-        except Exception as e:
-            raise IOError(f"Failed to load parameters: {str(e)}") from e

@@ -1,8 +1,8 @@
-# src/paralisi/core/protocols/loading.py
-"""Data loading protocols."""
-
+# src/paralisi/core/interfaces/data_loader.py
+#
 from pathlib import Path
 from typing import Protocol
+from numpy.typing import NDArray
 from ..data.data import RawData
 
 class DataLoader(Protocol):

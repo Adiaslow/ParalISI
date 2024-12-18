@@ -1,105 +1,35 @@
-# src/pyisi/core/experiment.py
-"""Core experiment handling for ISI analysis.
+# src/paralisi/core/experiments/base_experiment.py
 
-This module provides the main experiment class for handling Intrinsic Signal Imaging
-(ISI) experiments, including data loading, processing, and analysis.
-"""
-from enum import Enum, auto
 from pathlib import Path
 from typing import Dict, List, Optional, Any
-import logging
-
 import numpy as np
-import torch
-
-from .config import ExperimentConfig
-from .data_types import TrialData
-from .exceptions import (
-    ConfigurationError,
-    DataLoadingError,
-    ProcessingError,
-    StorageError
-)
-from ..utils.cuda_setup import setup_cuda
-from ..processing.trial_processor import process_trial
-from ..io.readers import load_trial_data
-from ..io.writers import save_processed_data
+import logging
+from .experiment_status import ExperimentStatus
+from ..data.trial_data import TrialData
+from ..configurations import ExperimentConfig
+from ..exceptions.data_exceptions import ConfigurationError, DataLoadingError
+from ..exceptions.processing_exceptions import ProcessingError
+from ..exceptions.storage_exceptions import StorageError
 
 logger = logging.getLogger(__name__)
 
-class ExperimentStatus(Enum):
-    """Status tracking for experiment processing."""
-    INITIALIZED = auto()
-    LOADING = auto()
-    PROCESSING = auto()
-    COMPLETED = auto()
-    ERROR = auto()
-
-    def __str__(self) -> str:
-        return self.name.lower()
-
-class ISIExperiment:
-    """Main class for handling ISI experiments.
-
-    This class manages the full lifecycle of an ISI experiment, including:
-    - Data loading and validation
-    - Trial processing
-    - Analysis and results generation
-    - Result storage and export
-    """
-
-    def __init__(
-        self,
-        config: ExperimentConfig,
-        device: Optional[torch.device] = None
-    ) -> None:
-        """Initialize an ISI experiment.
-
-        Args:
-            config: Configuration parameters for the experiment
-            device: Optional torch device for GPU acceleration
-
-        Raises:
-            ConfigurationError: If configuration is invalid
-            RuntimeError: If GPU is requested but not available
-        """
+class BaseExperiment:
+    def __init__(self, config: ExperimentConfig) -> None:
         self._validate_config(config)
         self.config = config
-
-        # Setup device and GPU if needed
-        try:
-            self.device = setup_cuda(device, config.processing.mode)
-        except RuntimeError as e:
-            raise RuntimeError(f"Failed to setup device: {str(e)}")
-
-        # Initialize data structures
         self.raw_data: Dict[str, np.ndarray] = {}
         self.processed_trials: Dict[int, TrialData] = {}
         self.analysis_results: Dict[str, Any] = {}
-
-        # State tracking
         self.status = ExperimentStatus.INITIALIZED
         self._current_trial = 0
-
         logger.info(f"Initialized experiment: {config.name}")
 
     @staticmethod
     def _validate_config(config: ExperimentConfig) -> None:
-        """Validate experiment configuration.
-
-        Args:
-            config: Configuration to validate
-
-        Raises:
-            ConfigurationError: If configuration parameters are invalid
-        """
         if not config.data_path.exists():
             raise ConfigurationError(f"Data path does not exist: {config.data_path}")
-
         if not config.acquisition.sampling_rate > 0:
             raise ConfigurationError("Invalid sampling rate")
-
-        # Add additional validation as needed
 
     def load_data(self, trial_indices: Optional[List[int]] = None) -> None:
         """Load experimental data from disk.
@@ -128,18 +58,7 @@ class ISIExperiment:
         Args:
             trial_indices: Optional list of specific trials to load
         """
-        if trial_indices is None:
-            trial_indices = range(self.config.acquisition.frames_per_trial)
-
-        for trial_idx in trial_indices:
-            data = load_trial_data(
-                self.config.data_path,
-                trial_idx,
-                self.config.acquisition
-            )
-            self.raw_data[f"trial_{trial_idx}"] = data
-
-        self._current_trial = 0
+        raise NotImplementedError("This method should be implemented by subclasses")
 
     def process_trials(
         self,
@@ -196,21 +115,7 @@ class ISIExperiment:
             start_trial: Starting trial index
             end_trial: Ending trial index
         """
-        for trial_idx in range(start_trial, end_trial):
-            self._current_trial = trial_idx
-            trial_key = f"trial_{trial_idx}"
-
-            if trial_key not in self.raw_data:
-                raise ValueError(f"Trial {trial_idx} not loaded")
-
-            processed_data = process_trial(
-                self.raw_data[trial_key],
-                self.config.processing,
-                self.device
-            )
-
-            self.processed_trials[trial_idx] = processed_data
-            logger.debug(f"Processed trial {trial_idx}")
+        raise NotImplementedError("This method should be implemented by subclasses")
 
     def save_results(self, output_path: Optional[Path] = None) -> None:
         """Save processed results to disk.
@@ -229,17 +134,21 @@ class ISIExperiment:
         output_path = output_path or self.config.output_path
 
         try:
-            save_processed_data(
-                self.processed_trials,
-                output_path,
-                self.config
-            )
+            self._save_results_to_disk(output_path)
             logger.info(f"Saved results to {output_path}")
 
         except Exception as e:
             error_msg = f"Error saving results: {str(e)}"
             logger.error(error_msg)
             raise StorageError(error_msg) from e
+
+    def _save_results_to_disk(self, output_path: Path) -> None:
+        """Helper method to save results to disk.
+
+        Args:
+            output_path: Path to save the results
+        """
+        raise NotImplementedError("This method should be implemented by subclasses")
 
     def _update_status(self, new_status: ExperimentStatus) -> None:
         """Update experiment status with logging.
@@ -280,3 +189,35 @@ class ISIExperiment:
             Processed trial data if available, None otherwise
         """
         return self.processed_trials.get(trial_idx)
+        # src/paralisi/core/experiments/base_experiment.py
+
+        from pathlib import Path
+        from typing import Dict, List, Optional, Any
+        import numpy as np
+        import logging
+        from .experiment_status import ExperimentStatus
+        from ..data import TrialData
+        from ..configurations import ExperimentConfig
+        from ..exceptions.data_exceptions import ConfigurationError, DataLoadingError
+        from ..exceptions.processing_exceptions import ProcessingError
+        from ..exceptions.storage_exceptions import StorageError
+
+        logger = logging.getLogger(__name__)
+
+        class BaseExperiment:
+            def __init__(self, config: ExperimentConfig) -> None:
+                self._validate_config(config)
+                self.config = config
+                self.raw_data: Dict[str, np.ndarray] = {}
+                self.processed_trials: Dict[int, TrialData] = {}
+                self.analysis_results: Dict[str, Any] = {}
+                self.status = ExperimentStatus.INITIALIZED
+                self._current_trial = 0
+                logger.info(f"Initialized experiment: {config.name}")
+
+            @staticmethod
+            def _validate_config(config: ExperimentConfig) -> None:
+                if not config.data_path.exists():
+                    raise ConfigurationError(f"Data path does not exist: {config.data_path}")
+                if not config.acquisition.sampling_rate > 0:
+                    raise ConfigurationError("Invalid sampling rate")

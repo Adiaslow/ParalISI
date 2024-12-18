@@ -1,14 +1,11 @@
-# src/PyISI/core/validation.py
+# src/paralisi/core/validation/data_validator.py
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Dict, List
 import numpy as np
 from numpy.typing import NDArray
-import torch
-from pathlib import Path
-from ..core.exceptions import ValidationError
-from ..utils.decorators import validate_input
+from ..exceptions import ValidationError
 
 class DataQualityMetric(Enum):
     """Common data quality metrics"""
@@ -214,78 +211,3 @@ class DataValidator:
         total_decay = (slope * len(mean_intensity)) / mean_intensity[0]
 
         return abs(total_decay)
-
-class BatchValidator:
-    """Validates multiple experiments for consistency"""
-
-    def __init__(self, validator: DataValidator):
-        self.validator = validator
-
-    def validate_batch(
-        self,
-        data_paths: List[Path],
-        group_metadata: Optional[Dict] = None
-    ) -> Dict[str, ValidationResult]:
-        """Validate multiple experiments"""
-        results = {}
-
-        for path in data_paths:
-            try:
-                # Load data (implement data loading logic)
-                data = self._load_data(path)
-                sync = self._load_sync(path)
-                metadata = self._load_metadata(path)
-
-                # Update metadata with group info
-                if group_metadata:
-                    metadata.update(group_metadata)
-
-                # Validate individual experiment
-                result = self.validator.validate_experiment(data, sync, metadata)
-                results[str(path)] = result
-
-            except Exception as e:
-                results[str(path)] = ValidationResult(
-                    passed=False,
-                    metrics={},
-                    issues=[f"Validation failed: {str(e)}"],
-                    recommendations=["Check data files and format"]
-                )
-
-        return results
-
-# Example usage:
-if __name__ == "__main__":
-    # Create validator
-    validator = DataValidator(
-        threshold_snr=2.0,
-        max_motion=1.0,
-        min_sync_quality=0.8
-    )
-
-    # Load example data
-    data = np.load("sample_data.npy")
-    sync = np.load("sample_sync.npy")
-    metadata = {
-        "frames_expected": 1000,
-        "framerate": 30.0,
-        "pixel_size": 10.0
-    }
-
-    # Validate data
-    result = validator.validate_experiment(data, sync, metadata)
-
-    # Print results
-    print(f"Validation {'passed' if result.passed else 'failed'}")
-    print("\nMetrics:")
-    for name, value in result.metrics.items():
-        print(f"{name}: {value:.3f}")
-
-    if result.issues:
-        print("\nIssues found:")
-        for issue in result.issues:
-            print(f"- {issue}")
-
-        print("\nRecommendations:")
-        for rec in result.recommendations:
-            print(f"- {rec}")

@@ -1,5 +1,5 @@
-# src/PyISI/core/protocols/__init__.py
-"""Protocol definitions for PyISI core functionality."""
+# src/paralisi/core/protocols/__init__.py
+"""Protocol definitions for ParalISI core functionality."""
 
 from .loading import DataLoader
 from .processing import DataProcessor

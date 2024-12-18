@@ -1,29 +1,20 @@
-# src/PyISI/core/stores.py
-"""Data stores for PyISI."""
+# src/paralisi/core/stores/trial_data_store.py
 
 from pathlib import Path
 from typing import Optional
-
-from .interfaces import DataLoader, CacheStrategy
-from .data_types import TrialData, TrialMetadata
+from ..interfaces.data_loader import DataLoader
+from ..interfaces.cache_strategy import CacheStrategy
+from ..data.trial_data import TrialData
+from ..data.trial_metadata import TrialMetadata
 
 class TrialDataStore:
     """Manages trial data storage and retrieval."""
 
-    def __init__(
-        self,
-        loader: DataLoader,
-        cache: CacheStrategy[TrialData]
-    ):
+    def __init__(self, loader: DataLoader, cache: CacheStrategy[TrialData]):
         self.loader = loader
         self.cache = cache
 
-    def get_trial(
-        self,
-        trial_id: int,
-        path: Path,
-        force_reload: bool = False
-    ) -> Optional[TrialData]:
+    def get_trial(self, trial_id: int, path: Path, force_reload: bool = False) -> Optional[TrialData]:
         """Get trial data, using cache if available."""
         cache_key = f"{path}:{trial_id}"
 

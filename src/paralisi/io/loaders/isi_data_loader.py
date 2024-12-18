@@ -1,13 +1,14 @@
-# src/pyisi/io/loaders.py
+# src/paralisi/io/loaders/isi_data_loader.py
+
 """Data loading implementations."""
 from pathlib import Path
 from typing import Dict, Any, Optional
 import h5py
 import numpy as np
 
-from ..core.protocols.loading import DataLoader
-from ..core.types.data_types import RawData
-from ..core.exceptions import DataLoadingError
+from ...core.interfaces.data_loader import DataLoader
+from ...core.data.data import RawData
+from ...core.exceptions.io_exceptions import DataLoadingError
 
 class ISIDataLoader(DataLoader):
     """Loads intrinsic signal imaging data from HDF5 files."""

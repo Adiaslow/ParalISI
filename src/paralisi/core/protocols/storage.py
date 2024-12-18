@@ -1,9 +1,9 @@
-# src/pyisi/core/protocols/storage.py
+# src/paralisi/core/protocols/storage.py
 """Data storage protocols."""
 
 from typing import Protocol
 from pathlib import Path
-from ..types.data_types import ProcessedData
+from ..data.data import ProcessedData
 
 class DataStorage(Protocol):
     """Interface for data storage strategies."""

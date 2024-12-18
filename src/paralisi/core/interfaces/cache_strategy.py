@@ -1,6 +1,4 @@
-# src/paralisi/core/protocols/caching.py
-"""Caching protocols."""
-
+# src/paralisi/core/interfaces/cache_strategy.py
 from typing import Protocol, TypeVar, Optional
 
 T = TypeVar('T')
