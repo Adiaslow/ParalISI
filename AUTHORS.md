@@ -12,7 +12,7 @@ Juavinett, A. L., Nauhaus, I., Garrett, M. E., Zhuang, J., & Callaway, E. M. (20
 - Jun Zhuang (The Allen Institute for Brain Science)
 - Edward M. Callaway (Salk Institute for Biological Studies)
 
-## Python Implementation (PyISI)
+## Python Implementation (ParalISI)
 
 ### Principal Investigator
 - **Euiseok Kim, Ph.D.**
@@ -45,7 +45,7 @@ We would like to thank:
 ## Contact
 For questions about:
 - The original MATLAB implementation: ajuavinett@ucsd.edu
-- The Python implementation (PyISI): admmurra@ucsc.edu
+- The Python implementation (ParalISI): admmurra@ucsc.edu
 - The Kim Laboratory: euiseok@ucsc.edu
 
 For detailed information about individual contributions, please see [CONTRIBUTORS.md](CONTRIBUTORS.md).

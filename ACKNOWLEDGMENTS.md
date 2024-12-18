@@ -20,7 +20,7 @@ This project was developed in the Kim Laboratory at UC Santa Cruz, which investi
   - Technical infrastructure
 
 ### Laboratory Support
-Special thanks to the members of the Kim Laboratory for their valuable insights, feedback, and support throughout the development of PyISI.
+Special thanks to the members of the Kim Laboratory for their valuable insights, feedback, and support throughout the development of ParalISI.
 
 ## Technical Resources
 ### Computing Infrastructure
@@ -28,7 +28,7 @@ Special thanks to the members of the Kim Laboratory for their valuable insights,
 - GPU computing resources for development and testing
 
 ### Software Development
-We acknowledge the following open-source projects that made PyISI possible:
+We acknowledge the following open-source projects that made ParalISI possible:
 - NumPy
 - PyTorch
 - CuPy
@@ -51,7 +51,7 @@ We acknowledge the following open-source projects that made PyISI possible:
 
 ## Additional Thanks
 - The broader neuroimaging community for their feedback and support
-- Open-source contributors who have helped improve PyISI
+- Open-source contributors who have helped improve ParalISI
 - Beta testers who provided valuable feedback
 
 ---
@@ -60,7 +60,7 @@ If we have inadvertently missed anyone who contributed to this project, please l
 
 ## Citation
 
-If you use PyISI in your research, please cite both the original protocol and this implementation:
+If you use ParalISI in your research, please cite both the original protocol and this implementation:
 
 ```bibtex
 @article{juavinett2016automated,
@@ -73,11 +73,11 @@ If you use PyISI in your research, please cite both the original protocol and th
     year={2016}
 }
 
-@software{murray2024pyisi,
-    title={PyISI: Python Implementation of Intrinsic Signal Imaging Analysis},
+@software{murray2024paralisi,
+    title={ParalISI: Python Implementation of Intrinsic Signal Imaging Analysis},
     author={Murray, Adam M},
     year={2024},
-    url={https://github.com/Adiaslow/PyISI}
+    url={https://github.com/Adiaslow/ParalISI}
 }
 ```
 

@@ -1,13 +1,13 @@
-# PyISI/pyproject.toml
+# ParalISI/pyproject.toml
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "PyISI"
+name = "ParalISI"
 version = "0.1.0"
-description = "PyISI is a modern Python library implementing the intrinsic signal imaging (ISI) analysis protocol described in Juavinett et al. (2016). Developed in the Kim Laboratory at UC Santa Cruz, this project modernizes the original MATLAB codebase with contemporary software engineering practices, improved performance, and enhanced usability."
+description = "ParalISI is a modern Python library implementing the intrinsic signal imaging (ISI) analysis protocol described in Juavinett et al. (2016). Developed in the Kim Laboratory at UC Santa Cruz, this project modernizes the original MATLAB codebase with contemporary software engineering practices, improved performance, and enhanced usability."
 authors = [{ name = "Your Name", email = "admmurra@ucsc.edu" }]
 dependencies = [
     "numpy>=1.20",

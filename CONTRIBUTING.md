@@ -1,10 +1,10 @@
-# Contributing to PyISI
+# Contributing to ParalISI
 
-First off, thank you for considering contributing to PyISI! 
+First off, thank you for considering contributing to ParalISI!
 
 ## Project Vision
 
-PyISI is modernizing a MATLAB-based Intrinsic Signal Imaging (ISI) analysis pipeline for visual cortex experiments. Our goal is to create a high-performance, maintainable Python implementation that preserves the scientific validity of the original while incorporating modern software engineering practices.
+ParalISI is modernizing a MATLAB-based Intrinsic Signal Imaging (ISI) analysis pipeline for visual cortex experiments. Our goal is to create a high-performance, maintainable Python implementation that preserves the scientific validity of the original while incorporating modern software engineering practices.
 
 ### Core Objectives
 - Maintain scientific accuracy of the original MATLAB implementation
@@ -51,8 +51,8 @@ By participating in this project, you agree to abide by our Code of Conduct (see
 1. Fork the repository on GitHub
 2. Clone your fork locally:
 ```bash
-git clone git@github.com:your-username/PyISI.git
-cd PyISI
+git clone git@github.com:your-username/ParalISI.git
+cd ParalISI
 ```
 3. Create a virtual environment:
 ```bash
@@ -102,17 +102,17 @@ def process_retinotopy(
     use_gpu: bool = False
 ) -> Tuple[np.ndarray, np.ndarray]:
     """Process retinotopic mapping data.
-    
+
     Args:
         data: Raw imaging data array of shape (T, H, W)
         threshold: Signal threshold for processing
         use_gpu: Whether to use GPU acceleration
-        
+
     Returns:
         Tuple containing:
             - Altitude map array of shape (H, W)
             - Azimuth map array of shape (H, W)
-            
+
     Raises:
         ValueError: If data dimensions are invalid
     """
@@ -154,7 +154,7 @@ We use pytest for testing. All code must include tests that validate both functi
 pytest
 
 # Run with coverage report
-pytest --cov=pyisi
+pytest --cov=paralisi
 
 # Run GPU-specific tests
 pytest tests/gpu/
@@ -183,4 +183,4 @@ If you have questions about contributing, feel free to:
 2. Contact the maintainers
 3. Ask in our developer chat
 
-Thank you for contributing to PyISI!
+Thank you for contributing to ParalISI!
