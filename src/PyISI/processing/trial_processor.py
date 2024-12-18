@@ -2,7 +2,7 @@
 
 import numpy as np
 from numpy.typing import NDArray
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Tuple
 from dataclasses import dataclass
 from ..core.exceptions import ProcessingError
 

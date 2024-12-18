@@ -1,5 +1,9 @@
 # PyISI: Modern Python Implementation of Intrinsic Signal Imaging Analysis
 
+[![PyPI version](https://img.shields.io/pypi/v/pyisi.svg)](https://pypi.org/project/pyisi/)
+[![Documentation Status](https://readthedocs.org/projects/pyisi/badge/?version=latest)](https://pyisi.readthedocs.io/en/latest/?badge=latest)
+[![Build Status](https://github.com/Adiaslow/PyISI/workflows/Python%20package/badge.svg)](https://github.com/Adiaslow/PyISI/actions)
+[![Code Coverage](https://codecov.io/gh/Adiaslow/PyISI/branch/main/graph/badge.svg)](https://codecov.io/gh/Adiaslow/PyISI)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -44,19 +48,29 @@ pip install pyisi[cuda]
 
 ```python
 import pyisi
+from pathlib import Path
 
-# Load and preprocess imaging data
-data = pyisi.load_data("path/to/data")
-preprocessed = pyisi.preprocess(data)
+try:
+    # Robust path handling
+    data_path = Path("/path/to/data").resolve()
 
-# Generate retinotopic maps
-alt_map, az_map = pyisi.compute_retinotopy(preprocessed)
+    # Load and preprocess imaging data
+    data = pyisi.load_data(data_path)
+    preprocessed = pyisi.preprocess(data)
 
-# Segment visual areas
-areas = pyisi.segment_areas(alt_map, az_map)
+    # Generate retinotopic maps
+    alt_map, az_map = pyisi.compute_retinotopy(preprocessed)
 
-# Visualize results
-pyisi.plot_visual_areas(areas)
+    # Segment visual areas
+    areas = pyisi.segment_areas(alt_map, az_map)
+
+    # Visualize results
+    pyisi.plot_visual_areas(areas)
+
+except FileNotFoundError:
+    print("Data file not found. Please check the path.")
+except pyisi.exceptions.ProcessingError as e:
+    print(f"Processing error: {e}")
 ```
 
 ## Key Components

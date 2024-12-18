@@ -31,7 +31,7 @@ def extract_matlab_info(file_path):
 
     return info
 
-def generate_documentation(directory, output_file='matlab_codebase_summary.md'):
+def generate_documentation(directory, output_file='docs/codebase_analysis/matlab_codebase_summary.md'):
     """Generate documentation for all MATLAB files in the directory."""
     # Get current timestamp
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

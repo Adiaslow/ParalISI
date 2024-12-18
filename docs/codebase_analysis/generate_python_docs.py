@@ -1,3 +1,4 @@
+#
 import os
 from pathlib import Path
 import datetime
@@ -37,72 +38,75 @@ def extract_python_info(file_path: Path) -> Dict[str, Any]:
 
     return info
 
-def generate_documentation(directory: str, output_file: str = 'python_codebase_summary.md'):
+def generate_documentation(directory: str, output_file: str = 'docs/codebase_analysis/python_codebase_summary.md'):
     """Generate documentation for all Python files in the directory."""
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+    # Track total files and functions for summary
+    total_files = 0
+    total_functions = 0
+
+    # Generate the main content first
+    main_content = []
+
+    # Walk through directory
+    for root, _, files in os.walk(directory):
+        python_files = [f for f in files if f.endswith('.py')]
+
+        if python_files:
+            rel_path = os.path.relpath(root, directory)
+            section_header = "\n## Root Directory\n\n" if rel_path == '.' else f"\n## Directory: {rel_path}\n\n"
+            main_content.append(section_header)
+
+            for file in sorted(python_files):
+                total_files += 1
+                file_path = Path(root) / file
+                info = extract_python_info(file_path)
+                total_functions += len(info['functions'])
+
+                # Write file information
+                main_content.append(f"### {file}")
+                main_content.append("**File Statistics:**")
+                main_content.append(f"- Total lines: {info['total_lines']}")
+                main_content.append(f"- Non-empty lines: {info['non_empty_lines']}")
+                main_content.append(f"- Number of functions: {len(info['functions'])}")
+                main_content.append("")
+
+                # Write header comments if they exist
+                if info['header_comment']:
+                    main_content.append("**File Description:**")
+                    main_content.extend(info['header_comment'])
+                    main_content.append("")
+
+                # Write function definitions
+                if info['functions']:
+                    main_content.append("**Functions:**")
+                    main_content.append("```python")
+                    for func in info['functions']:
+                        main_content.append(f"def {func}")
+                    main_content.append("```")
+
+                main_content.append("---")
+                main_content.append("")
+
+    # Create the complete document structure
+    document_parts = [
+        "# Python Codebase Summary",
+        "",
+        f"Generated on: {timestamp}",
+        "",
+        "## Summary Statistics",
+        f"- Total Python files: {total_files}",
+        f"- Total functions: {total_functions}",
+        "",
+        "---",
+        "",
+        *main_content
+    ]
+
+    # Write everything to the output file
     with open(output_file, 'w', encoding='utf-8') as f:
-        # Write header
-        f.write("# Python Codebase Summary\n\n")
-        f.write(f"Generated on: {timestamp}\n\n")
-
-        # Track total files and functions for summary
-        total_files = 0
-        total_functions = 0
-
-        # Walk through directory
-        for root, _, files in os.walk(directory):
-            python_files = [f for f in files if f.endswith('.py')]
-
-            if python_files:
-                rel_path = os.path.relpath(root, directory)
-                section_header = "\n## Root Directory\n\n" if rel_path == '.' else f"\n## Directory: {rel_path}\n\n"
-                f.write(section_header)
-
-                for file in sorted(python_files):
-                    total_files += 1
-                    file_path = Path(root) / file
-                    info = extract_python_info(file_path)
-                    total_functions += len(info['functions'])
-
-                    # Write file information
-                    f.write(f"### {file}\n")
-                    f.write("**File Statistics:**\n")
-                    f.write(f"- Total lines: {info['total_lines']}\n")
-                    f.write(f"- Non-empty lines: {info['non_empty_lines']}\n")
-                    f.write(f"- Number of functions: {len(info['functions'])}\n")
-
-                    # Write header comments if they exist
-                    if info['header_comment']:
-                        f.write("**File Description:**\n")
-                        f.write("\n".join(info['header_comment']))
-                        f.write("\n")
-
-                    # Write function definitions
-                    if info['functions']:
-                        f.write("**Functions:**\n```python\n")
-                        for func in info['functions']:
-                            f.write(f"def {func}\n")
-                        f.write("```\n")
-
-                    f.write("---\n\n")
-
-        # Write summary statistics after first header
-        summary = f"""## Summary Statistics
-- Total Python files: {total_files}
-- Total functions: {total_functions}
-
----
-"""
-        # Read the existing content
-        with open(output_file, 'r') as original:
-            content = original.read()
-
-        # Write everything with summary inserted after the initial header
-        with open(output_file, 'w') as final:
-            parts = content.split('\n\n')
-            final.write(f"{parts[0]}\n\n{parts[1]}\n\n{summary}")
-            final.write('\n\n'.join(parts[2:]))
+        f.write('\n'.join(document_parts))
 
 if __name__ == "__main__":
     import sys

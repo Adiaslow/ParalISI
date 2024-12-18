@@ -1,5 +1,8 @@
 # tests/test_processing/test_segmentation.py
 
+from PyISI.processing.segmentation.areas import VisualAreaSegmenter
+from PyISI.processing.segmentation.retinotopy import RetinotopicMapper
+
 def test_area_detection_accuracy():
     """Test area detection against known ground truth"""
     segmenter = VisualAreaSegmenter()

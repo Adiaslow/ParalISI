@@ -2,9 +2,9 @@
 
 import numpy as np
 from enum import Enum
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple
 from dataclasses import dataclass
-from scipy import signal, ndimage
+from scipy import signal
 import torch
 from numpy.typing import NDArray
 from ..core.exceptions import ProcessingError

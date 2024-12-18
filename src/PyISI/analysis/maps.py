@@ -3,7 +3,7 @@
 import numpy as np
 import torch
 from numpy.typing import NDArray
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple
 from dataclasses import dataclass
 from scipy import ndimage
 from ..core.exceptions import ProcessingError

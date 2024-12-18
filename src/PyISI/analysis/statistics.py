@@ -1,6 +1,6 @@
 # src/PyISI/analysis/statistics.py
 
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple
 import numpy as np
 from numpy.typing import NDArray
 from scipy import stats

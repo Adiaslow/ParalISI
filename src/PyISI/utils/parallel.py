@@ -1,5 +1,8 @@
 # src/PyISI/utils/parallel.py
 
+from pathlib import Path
+from typing import Any, Callable, List
+
 class BatchProcessor:
     """Handles parallel processing of multiple sessions"""
 

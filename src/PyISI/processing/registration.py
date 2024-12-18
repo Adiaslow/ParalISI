@@ -2,12 +2,11 @@
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Tuple, Optional, Dict, Callable, List
+from typing import Optional, Dict, Callable
 import numpy as np
 import torch
 import torch.nn.functional as F
 from numpy.typing import NDArray
-from scipy.ndimage import gaussian_filter
 from ..core.exceptions import RegistrationError
 from ..utils.decorators import validate_input, requires_cuda
 

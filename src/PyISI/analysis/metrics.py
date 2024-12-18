@@ -2,9 +2,8 @@
 
 import numpy as np
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
 from numpy.typing import NDArray
-from scipy import stats, signal
+from scipy import stats
 from ..core.exceptions import AnalysisError
 
 @dataclass

@@ -1,7 +1,7 @@
 # src/PyISI/analysis/quality.py
 
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Optional
 import numpy as np
 from numpy.typing import NDArray
 from dataclasses import dataclass
