@@ -5,6 +5,8 @@ from typing import Dict, List, Optional
 import numpy as np
 from numpy.typing import NDArray
 from dataclasses import dataclass
+from scipy import stats
+
 from ..core.exceptions import QualityError
 
 class QualityLevel(Enum):
